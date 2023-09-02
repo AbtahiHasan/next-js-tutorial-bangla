@@ -1,0 +1,41 @@
+"use client"
+import AddTodo from "@/components/addTodo";
+import axios from "axios";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { FiEdit } from "react-icons/fi";
+import { MdOutlineDeleteOutline } from "react-icons/md";
+
+
+export default function Home() {
+  const [todos, setTodos] = useState([])
+  useEffect(() => {
+    axios.get("api/todos")
+      .then(res => setTodos(res.data))
+  }, [])
+
+  const deleteTodo = (id) => {
+    axios.delete(`api/todos/${id}`)
+      .then(res => res.data)
+  }
+
+  return (
+    <main>
+      <AddTodo />
+      <ul className="w-1/2 mx-auto mt-5">
+        {
+          todos.map(todo => {
+            return <li className="flex justify-between  items-center border p-2 mt-1" key={todo._id}>
+              <span>{todo.todo}</span>
+              <span className="flex gap-3 items-center">
+                <Link href={`/${todo._id}`}><FiEdit /></Link>
+                <button onClick={() => deleteTodo(todo._id)}><MdOutlineDeleteOutline /></button>
+              </span>
+            </li>
+          })
+        }
+      </ul>
+
+    </main >
+  )
+}
